@@ -14,14 +14,28 @@ do
 }
 while (AskPlayAgain());
 
-Console.WriteLine("Thank you for playing.");
+Console.WriteLine("\n\n\nThank you for playing.");
 
 static Difficulty ChooseDifficulty()
 {
-    //print a menu
-    //read a key 1, 2, or 3 (AskPlayAgain) 
-    //return difficulty
-    return Difficulty.Medium;
+    Console.WriteLine("Select Difficulty\n");
+    Console.WriteLine("1. Easy");
+    Console.WriteLine("2. Medium");
+    Console.WriteLine("3. Hard");
+    Console.Write("Select Difficulty");
+
+    while (true)
+    {
+        switch (Console.ReadKey(true).KeyChar)
+        {
+            case '1':
+                return Difficulty.Easy;
+            case '2':
+                return Difficulty.Medium;
+            case '3':
+                return Difficulty.Hard;
+        }
+    }
 }
 
 static bool AskPlayAgain()
