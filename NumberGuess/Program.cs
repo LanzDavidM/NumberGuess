@@ -1,5 +1,13 @@
 ﻿const int MinNumber = 1;
 
+do
+{
+    PlayGame(ChooseDifficulty());
+}
+while (AskPlayAgain());
+
+Console.WriteLine("\nThank you for playing.");
+
 static (int MaxNumber, int Chances) GetSettings(Difficulty difficulty) => difficulty switch
 {
     Difficulty.Easy => (50, 10),
@@ -8,21 +16,14 @@ static (int MaxNumber, int Chances) GetSettings(Difficulty difficulty) => diffic
     _ => throw new ArgumentOutOfRangeException(nameof(difficulty))
 };
 
-do
-{
-    PlayGame(ChooseDifficulty());
-}
-while (AskPlayAgain());
-
-Console.WriteLine("\n\n\nThank you for playing.");
-
 static Difficulty ChooseDifficulty()
 {
+    Console.Clear();
     Console.WriteLine("Select Difficulty\n");
     Console.WriteLine("1. Easy");
     Console.WriteLine("2. Medium");
     Console.WriteLine("3. Hard");
-    Console.Write("Select Difficulty");
+    Console.Write("Press 1, 2, or 3: ");
 
     while (true)
     {
@@ -60,19 +61,19 @@ static bool AskPlayAgain()
 
 static void PlayGame(Difficulty gameDifficulty)
 {
-    var gameMode = GetSettings(gameDifficulty);
-    int secretNumber = Random.Shared.Next(MinNumber, gameMode.MaxNumber + 1);
+    var (chances, maxNumber) = GetSettings(gameDifficulty);
+    int secretNumber = Random.Shared.Next(MinNumber, maxNumber + 1);
     int guessCount = 0;
     int guess;
 
     Console.Clear();
     Console.WriteLine("Welcome to Guess the Number\n");
-    Console.WriteLine($"I have picked a number between {MinNumber} and {gameMode.MaxNumber}. {secretNumber}");
-    Console.WriteLine($"You have {gameMode.Chances} chances to guess my number.");
+    Console.WriteLine($"I have picked a number between {MinNumber} and {maxNumber}");
+    Console.WriteLine($"You have {chances} chances to guess my number.");
 
     do
     {
-        guess = GetGuess(guessCount, gameDifficulty);
+        guess = GetGuess(guessCount, chances, maxNumber);
         guessCount++;
 
         if (guess < secretNumber)
@@ -88,12 +89,12 @@ static void PlayGame(Difficulty gameDifficulty)
             Console.WriteLine($"You guessed {guess}. Correct!");
         }
     }
-    while (guess != secretNumber && guessCount < gameMode.Chances);
+    while (guess != secretNumber && guessCount < chances);
 
     if (guess != secretNumber)
     {
         Console.WriteLine($"\nMy number was {secretNumber}.");
-        Console.WriteLine($"You failed to guess my number in {gameMode.Chances} tries.");
+        Console.WriteLine($"You failed to guess my number in {chances} tries.");
         Console.WriteLine("You LOSE.");
         return;
     }
@@ -103,22 +104,20 @@ static void PlayGame(Difficulty gameDifficulty)
     Console.WriteLine("You WIN!");
 }
 
-static int GetGuess(int guessCount, Difficulty gameDifficulty)
+static int GetGuess(int guessCount, int chances, int maxNumber)
 {
-    var gameMode = GetSettings(gameDifficulty);
-
     while (true)
     {
-        Console.Write($"\nPlease enter your guess {guessCount + 1}/{gameMode.Chances}: ");
+        Console.Write($"\nPlease enter your guess {guessCount + 1}/{chances}: ");
 
         if (int.TryParse(Console.ReadLine(), out int guess)
             && guess >= MinNumber
-            && guess <= gameMode.MaxNumber)
+            && guess <= maxNumber)
         {
             return guess;
         }
 
-        Console.WriteLine($"That was an invalid guess. Enter a whole number from {MinNumber} to {gameMode.MaxNumber}.");
+        Console.WriteLine($"That was an invalid guess. Enter a whole number from {MinNumber} to {maxNumber}.");
     }
 }
 
